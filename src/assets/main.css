@@ -50,3 +50,9 @@ a,
   animation: shake 0.75s ease-in-out;
   animation-iteration-count: 1;
 }
+
+
+i {
+  font-size: 1.7rem;
+    color: yellow;
+}

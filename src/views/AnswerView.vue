@@ -3,7 +3,9 @@
         <json-viewer v-if="resultData.hits" :value="resultData" :expand-depth=10 copyable>
         </json-viewer>
         <div v-else>
-            <div>쿼리를 제출하세요.</div>
+            <div style="margin-left:25px; margin-top: 25px;">문서 샘플</div>
+            <json-viewer :value="resultData" :expand-depth=10 copyable>
+            </json-viewer>
         </div>
     </div>
 </template>
