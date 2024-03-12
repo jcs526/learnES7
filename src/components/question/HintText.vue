@@ -9,7 +9,7 @@
         </div>
         <div class="explain">{{ explain[currentChapter] }}</div>
         <div class="hint">
-            <div v-for="(hint, index) in hints[currentChapter]" :key="index" v-html="hint"></div>
+            <li v-for="(hint, index) in hints[currentChapter]" :key="index" v-html="hint"></li>
         </div>
     </div>
 </template>
@@ -27,16 +27,18 @@ const title: Ref<string> = ref("Elasticsearch7 쿼리 학습");
 
 // 텍스트 관련 로직
 const mainStore = useMainStore();
-const { hints, explain, currentChapter, totalChapter } = storeToRefs(mainStore);
+const { hints, explain, currentChapter, totalChapter, canNext } = storeToRefs(mainStore);
 
 const handleLeftArrow = (): void => {
     if (currentChapter.value > 1) {
         currentChapter.value -= 1;
+        canNext.value = false;
     }
 };
 const handleRightArrow = (): void => {
     if (currentChapter.value < totalChapter.value) {
         currentChapter.value += 1;
+        canNext.value = false;
     }
 };
 
@@ -72,6 +74,7 @@ const handleRightArrow = (): void => {
 }
 
 .hint {
+    margin: 15px 0;
     font-size: 20px;
 }
 </style>
