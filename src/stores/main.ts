@@ -26,14 +26,27 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       }, _source: ["taxful_total_price"]
     },
     5: { query: { bool: { must: [{ match: {} }], must_not: [] } }, _source: ["customer_full_name"] },
-    6: { query: { bool: { filter: [{ term: {} }] } }, _source: ["customer_full_name"] },
+    6: { query: { bool: { filter: [{ term: {} }] } }, _source: ["email", "taxful_total_price"] },
     7: { query: { bool: { should: [{ term: {} }] } }, _source: ["customer_full_name", "day_of_week", "taxful_total_price"] },
     8: { query: { bool: { should: [{ term: {} }] } }, _source: ["customer_full_name", "day_of_week", "taxful_total_price"] },
     9: { query: { bool: { must: [{ terms: {} }] } }, _source: ["manufacturer"] },
     10: { query: { bool: { must: [{ wildcard: {} }] } }, _source: ["user"] },
-    11: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    12: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    13: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
+    11: { query: { exists: { field: "" } }, _source: ["email"] },
+    12: {
+      query: {
+        multi_match: {
+          query: "",
+          fields: []
+        }
+      },
+      _source: [
+        "customer_first_name",
+        "customer_last_name",
+        "email"
+      ]
+    }
+    ,
+    13: { query: { match_all: {} }, from: 0, size: 0 },
     14: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
     15: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
     16: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
@@ -119,6 +132,8 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       "should 쿼리는 주어진 조건 중 하나 이상을 만족하는 문서를 찾습니다.",
       "should 쿼리는 선택적 조건을 표현할 때 사용됩니다.",
       "must나 must_not 조건과 함께 사용하여 유연한 검색 조건을 구성할 수 있습니다.",
+      "minimum_should_match 값을 이용하여 최소 n개 이상의 조건을 만족하는 문서를 검색할 수 있습니다",
+      "(중요) minimum_should_match은 should만 있다면 기본값이 1이고 , 다른 bool 쿼리가 있다면 기본값이 0입니다(검색결과에 영향x)",
       "<i>1. customer_full_name 필드 값이 Oliver Rios 이거나<br>2. day_of_week 필드값이 'Monday'이거나<br>3. taxful_total_price 필드의 값이 1000 초과<br>위 조건중 2개이상을 만족하는 문서를 검색하세요.</i>"
     ],
     8: [
@@ -129,7 +144,7 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     9: [
       "Terms 쿼리는 여러 개의 정확한 값을 동시에 찾을 수 있게 해줍니다.",
       "예를 들어, 여러 개의 특정 ID나 키워드를 한 번에 검색하고 싶을 때 유용합니다.",
-      "Terms 쿼리는 {field:Array[]} 형태의 Object를 받으며, term과 마찬가지로 정확히 일치하는 값을 찾습니다. text 타입을 검색할 때는 .keyword를 붙여줘야 합니다.",
+      "Terms 쿼리는 {[fieldname]:Array[]} 형태의 Object를 받으며, term과 마찬가지로 정확히 일치하는 값을 찾습니다. text 타입을 검색할 때는 .keyword를 붙여줘야 합니다.",
       "<i>manufacturer 필드의 값이 'Elitelligence' 또는 'Pyramidustries'인 문서를 검색하세요</i>"
     ],
     10: [
@@ -139,14 +154,17 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     ],
     11: [
       "Exists 쿼리는 특정 필드에 값이 존재하는 문서만을 찾을 때 사용합니다.", "이는 필드의 존재 여부만을 판단하여 해당 필드가 있는 문서를 검색 결과로 반환합니다.",
-      "exists_not은 없습니다. 필드가 존재하지 않는 경우의 검색을 원할 경우 must_not에 exists를 사용해야합니다"
+      "exists_not은 없습니다. 필드가 존재하지 않는 경우의 검색을 원할 경우 must_not에 exists를 사용해야합니다",
+      "<i>email 필드가 있는 문서를 검색하세요.</i>"
     ],
     12: [
-      "multi_match 쿼리는 여러 필드에서 동시에 검색어를 찾습니다.", "이는 하나의 검색어를 다양한 필드에서 찾고 싶을 때 사용되며, 여러 필드에 걸쳐 있는 정보를 통합적으로 검색할 수 있게 해줍니다."
+      "multi_match 쿼리는 여러 필드에서 동시에 검색어를 찾습니다.", "이는 하나의 검색어를 다양한 필드에서 찾고 싶을 때 사용되며, 여러 필드에 걸쳐 있는 정보를 통합적으로 검색할 수 있게 해줍니다.",
+      "<i>'customer_first_name', 'customer_last_name', 'email' 필드 중에서 'Eddie' 값을 포함하는 문서를 검색하세요.</i>"
     ],
     13: [
       "'from'과 'size' 파라미터는 검색 결과의 페이징을 처리할 때 사용됩니다.",
-      "'from'은 어디서부터 결과를 가져올지, 'size'는 몇 개의 결과를 가져올지를 지정합니다."
+      "'from'은 어디서부터 결과를 가져올지, 'size'는 몇 개의 결과를 가져올지를 지정합니다.",
+      "<i>6번째 문서부터 30개의 문서를 검색하세요.</i>"
     ],
     14: [
       "_source 필드는 검색 결과로 돌려받을 필드를 지정합니다. 기본적으로 모든 필드가 결과에 포함되지만, _source를 사용하여 필요한 필드만 선택적으로 가져올 수 있습니다.",

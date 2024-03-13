@@ -1,3 +1,4 @@
+<!-- eslint-disable max-len -->
 <template>
     <div class="hint-wrapper">
         <div class="hint-header">
@@ -9,7 +10,8 @@
         </div>
         <div class="explain">{{ explain[currentChapter] }}</div>
         <div class="hint">
-            <li v-for="(hint, index) in hints[currentChapter]" :key="index" v-html="hint"></li>
+            <li v-for="(hint, index) in hints[currentChapter]" :class="{ 'no-marker': hint.startsWith('<i>') }" :key="index"
+                v-html="hint"></li>
         </div>
     </div>
 </template>

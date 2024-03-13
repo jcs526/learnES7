@@ -51,6 +51,9 @@ a,
   animation-iteration-count: 1;
 }
 
+.no-marker {
+  list-style-type: none; /* li 태그의 목록 마커를 제거합니다. */
+}
 
 i {
   font-size: 1.7rem;
