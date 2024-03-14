@@ -10,7 +10,7 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
 
 
   const currentChapter: Ref<number> = ref(1);
-  const totalChapter: Ref<number> = ref(20);
+  const totalChapter: Ref<number> = ref(18);
 
   const defaultQuery = ref({
     1: { query: { match_all: {} } },
@@ -47,17 +47,164 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     }
     ,
     13: { query: { match_all: {} }, from: 0, size: 0 },
-    14: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    15: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    16: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    17: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
-    18: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
+    14: { query: { match_all: {} }, _source: { include: [], exclude: [] } },
+    15: {
+      sort: {
+        order_date: ""
+      },
+      _source: [
+        "order_date"
+      ]
+    },
+    16: {
+      size: 0,
+      _source: false,
+      query: {
+        range: {
+          order_date: {
+            gte: "now-30d/d",
+            lte: "now/d"
+          }
+        }
+      },
+      aggs: {
+        "원하는 통계 결과명": {
+          min: {
+            field: "taxful_total_price"
+          }
+        },
+        최대치: {
+          max: {
+            field: "taxful_total_price"
+          }
+        },
+        합계: {
+          sum: {
+            field: "taxful_total_price"
+          }
+        },
+        평균: {
+          avg: {
+            field: "taxful_total_price"
+          }
+        },
+        통합정보: {
+          stats: {
+            field: "taxful_total_price"
+          }
+        },
+        필드종류수: {
+          cardinality: {
+            field: "taxful_total_price"
+          }
+        },
+        퍼센테이지별결과: {
+          percentiles: {
+            field: "taxful_total_price",
+            percents: [
+              20,
+              60,
+              80
+            ]
+          }
+        },
+        지정한값의퍼센테이지: {
+          percentile_ranks: {
+            field: "taxful_total_price",
+            values: [30, 50, 200]
+          }
+        }
+      }
+    },
+    17: {
+      size: 0,
+      _source: false,
+      query: {
+        range: {
+          order_date: {
+            gte: "now-30d/d",
+            lte: "now/d"
+          }
+        }
+      },
+      aggs: {
+        "필드 데이터별 통계(size 없을시 상위 10개만)": {
+          terms: {
+            field: "day_of_week",
+            size: 5
+          }
+        },
+        "지정된 범위별 통계": {
+          range: {
+            field: "taxful_total_price",
+            ranges: [
+              {
+                to: 30
+              },
+              {
+                from: 30,
+                to: 100
+              },
+              {
+                from: 100
+              }
+            ]
+          }
+        },
+        "지정된 간격크기별 통계": {
+          histogram: {
+            field: "total_quantity",
+            interval: 2
+          }
+        },
+        "지정된 범위별 통계(날짜)": {
+          date_range: {
+            field: "order_date",
+            ranges: [
+              {
+                to: "2024-03-01"
+              },
+              {
+                from: "2024-03-01",
+                to: "2024-03-06"
+              },
+              {
+                from: "2024-03-06"
+              }
+            ]
+          }
+        },
+        "지정된 간격크기별 통계(날짜)": {
+          date_histogram: {
+            field: "order_date",
+            interval: "3d"
+          }
+        }
+      }
+    },
+    18: {
+      size: 0,
+      aggs: {
+        "요일당 금액통계": {
+          terms: {
+            field: "day_of_week"
+          },
+          aggs: {
+            avg_price: {
+              avg: {
+                field: "taxful_total_price"
+              }
+            }
+          }
+        }
+      }
+    },
     19: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
     20: { query: { match: { customer_full_name: "" }, }, _source: ["customer_full_name"] },
   });
 
   const explain: Ref<NumberIndexedObject> = ref({
-    1: "Elasticsearch7 쿼리 학습에 오신 것을 환영합니다!\n이 사이트는 Elasticsearch7의 쿼리 학습을 돕기 위한 게임입니다.",
+    1: "Elasticsearch7 쿼리 학습에 오신 것을 환영합니다!\n이 사이트는 Elasticsearch7의 쿼리 학습을 돕기 위한 간단한 예제입니다.",
     2: "Match 쿼리",
     3: "Term 쿼리",
     4: "Range 쿼리",
@@ -69,13 +216,12 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     10: "Wildcard 쿼리",
     11: "Exists 쿼리",
     12: "multi_match",
-    13: "from, size",
+    13: "from & size",
     14: "_source",
     15: "sort",
-    16: "Aggregation 쿼리 - Metrics",
-    17: "Aggregation 쿼리 - Bucket",
-    18: "Aggregation 쿼리 - Pipeline",
-    19: "Aggregation 쿼리",
+    16: "Aggregations - Metrics",
+    17: "Aggregations - Bucket",
+    18: "sub-aggregations"
   });
 
 
@@ -168,21 +314,32 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     ],
     14: [
       "_source 필드는 검색 결과로 돌려받을 필드를 지정합니다. 기본적으로 모든 필드가 결과에 포함되지만, _source를 사용하여 필요한 필드만 선택적으로 가져올 수 있습니다.",
-      "_source 필드는 기본적으로 배열 형태이며, 'include'와 'exclude'로 이루어진 Object로도 설정 가능합니다.",
-      "Object 형태로 입력할 경우 'include' 배열로 받은 필드만이 출력되고, 'exclude' 배열로 받은 필드는 제외됩니다."
+      "_source 필드는 false, 문자열 배열과 'include'와 'exclude'로 이루어진 Object로도 설정 가능합니다.",
+      "false로 지정할 경우 검색결과에 _source 데이터가 포함되지 않습니다. 배열형태로 전달시 wildcard 형태로 전달가능합니다.",
+      "Object 형태로 입력할 경우 'include' 배열로 받은 필드만이 출력되고, 'exclude' 배열로 받은 필드는 제외됩니다.",
+      "<i>customer_으로 시작하는 필드는 포함하지만, _id로 끝나는 필드는 검색결과에 포함되지 않도록 검색하세요</i>"
     ],
     15: [
       "sort 옵션을 사용하면 검색 결과의 정렬 순서를 지정할 수 있습니다.",
       "예를 들어, 날짜나 가격과 같은 필드를 기준으로 오름차순 또는 내림차순으로 정렬할 수 있습니다.",
-      "sort에는 script가 사용이 가능합니다."
+      "sort에는 script가 사용이 가능합니다.",
+      "오름차는 asc, 내림차는 desc로 표현됩니다.",
+      "<i>order_date 필드를 기준으로 내림차순으로 정렬해서 검색하세요.</i>"
     ],
     16: [
-      "Aggregation 쿼리는 데이터에 대한 통계적 분석을 제공하여, 여러 문서의 데이터를 요약, 그룹화, 혹은 집계하여 보여줍니다.",
-      "이를 통해 대량의 데이터에서 유용한 정보를 추출하고, 데이터의 패턴이나 트렌드를 파악할 수 있습니다."
+      "Aggregations 쿼리는 데이터에 대한 통계적 분석을 제공하여, 여러 문서의 데이터를 요약, 그룹화, 혹은 집계하여 보여줍니다.",
+      "이를 통해 대량의 데이터에서 유용한 정보를 추출하고, 데이터의 패턴이나 트렌드를 파악할 수 있습니다.",
+      "aggs 필드는 query 필드의 조건에 해당하는 문서들에 대한 통계입니다.",
+      "Metrics Aggregations에는  'min', 'max', 'sum', 'avg'등이 있습니다.",
+      "<i>챕터 16부터는 문제가 아니라 기능설명입니다!</i>"
     ],
-    17: [],
-    18: [],
-    19: [],
+    17: [
+      "Bucket Aggregation은 주어진 조건으로 분류된 버킷들을 만들고, 각 버킷에 소속되는 문서들을 모아 그룹으로 구분하는 것입니다",
+      "각 버킷 별로 포함되는 도큐먼트의 개수는 doc_count 값에 기본적으로 표시가 되며 각 버킷 안에 metrics aggregation 을 이용해서 다른 계산들도 가능합니다",
+      "주로 사용되는 bucket aggregation 들은 Range, Histogram, Terms 등이 있습니다."
+    ],
+    18: ["Bucket Aggregation 으로 만든 버킷들 내부에 다시 \"aggs\" : { } 를 선언해서 또다른 버킷을 만들거나 Metrics Aggregation 을 만들어 사용이 가능합니다.",
+      "다음은 terms aggregation을 이용해서 생성한 day_of_week 버킷 별로 avg aggregation을 이용해서 taxful_total_price 필드의 평균값을 계산하는 통계를 생성하는 예제입니다."],
   });
 
   const resultData: Ref<NumberIndexedObject> = ref({
@@ -276,37 +433,3 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
 
   return { isShake, currentChapter, totalChapter, defaultQuery, explain, hints, resultData, canNext };
 });
-
-/**
- * {
-    "query": {
-        "bool": {
-            "should": [
-                {
-                    "term": {
-                        "customer_full_name": "Oliver Rios"
-                    }
-                },
-                {
-                    "term": {
-                        "day_of_week": "Monday"
-                    }
-                },
-                {
-                    "range": {
-                        "taxful_total_price": {
-                            "gte": 1000
-                        }
-                    }
-                }
-            ],
-            "minimum_should_match": 2
-        }
-    },
-    "_source": [
-        "customer_full_name",
-        "day_of_week",
-        "taxful_total_price"
-    ]
-}
- */

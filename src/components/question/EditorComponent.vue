@@ -1,9 +1,11 @@
 <template>
-    <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }"></div>
-    <button class="submit" :class="{ pulse_animation: !canNext }" @click="handleSubmit">제출</button>
-    <button class="formatting" @click="handleFormatting">format</button>
-    <button class="formatting" @click="handleReset">초기화</button>
-    <button class="next animation" v-if="canNext" @click="handleNext">다음</button>
+    <div class="editor-wrapper">
+        <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }"></div>
+        <button class="submit" :class="{ pulse_animation: !canNext }" @click="handleSubmit">제출</button>
+        <button class="formatting" @click="handleFormatting">format</button>
+        <button class="formatting" @click="handleReset">초기화</button>
+        <button class="next animation" v-if="canNext" @click="handleNext">다음</button>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -239,7 +241,7 @@ interface EsRes {
     }
 }
 const gradingResult = (chapter: number, data: EsRes, parseQuery: any): boolean => {
-    if (data?.hits?.hits?.length === 0) {
+    if (data?.hits?.hits?.length === 0 && chapter < 16) {
         return false;
     }
     const dataList = data?.hits?.hits.map((v: { _source: ESdata }) => v._source);
@@ -297,6 +299,30 @@ const gradingResult = (chapter: number, data: EsRes, parseQuery: any): boolean =
         return dataList.every((data: ESdata): boolean => !!(data.customer_first_name?.includes("Eddie") || data.customer_last_name?.includes("Eddie") || data.email?.includes("Eddie")));
     } else if (chapter === 13) {
         return parseQuery.from === 5 && parseQuery.size === 30;
+    } else if (chapter === 14) {
+        return dataList.every((data: ESdata): boolean => {
+            const fields = Object.keys(data);
+            if (fields.length === 0) {
+                return false;
+            }
+            if (fields.every(field => /^customer_/.test(field) && !/_id$/.test(field))) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    } else if (chapter === 15) {
+        for (let i = 0; i < dataList.length - 1; i++) {
+            const currentDate = dataList[i].order_date ?? "";
+            const nextDate = dataList[i + 1].order_date ?? "";
+
+            if (currentDate < nextDate) {
+                return false;  // 내림차순이 아니면 false 반환
+            }
+        }
+        return true;
+    } else if (chapter === 16 || chapter === 17 || chapter === 18) {
+        return true;
     }
     return false;
 };
@@ -307,7 +333,7 @@ watch(currentChapter, () => {
 
 </script>
 
-<style>
+<style scoped>
 .editor {
     width: 100vh;
     min-height: 500px;
