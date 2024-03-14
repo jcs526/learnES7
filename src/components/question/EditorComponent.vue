@@ -310,7 +310,7 @@ watch(currentChapter, () => {
 <style>
 .editor {
     width: 100vh;
-    height: 50%;
+    min-height: 500px;
 }
 
 .margin-view-overlays {

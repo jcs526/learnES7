@@ -23,9 +23,9 @@ html {
 }
 
 .wrapper {
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
-  padding: 10px 40px;
+  padding: 10px 40px 50px 40px;
   background-color: hsla(160, 100%, 37%, 1);
 }
 
