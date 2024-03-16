@@ -1,4 +1,3 @@
-
 <template>
   <div class="wrapper">
     <QuestionComponet></QuestionComponet>
@@ -14,11 +13,13 @@
   </div>
 
   <RouterView />
+  <!-- <AnswerView></AnswerView> -->
 </template>
 
 <script setup lang="ts">
-import { RouterView } from "vue-router";
+// import { RouterView } from "vue-router";
 import QuestionComponet from "./components/question/QuestionComponet.vue";
+import AnswerView from "@/views/AnswerView.vue";
 
 const handleWindowOpen = (link: string) => {
   window.open(link);

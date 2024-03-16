@@ -102,7 +102,7 @@ const handleSubmit = async (): Promise<void> => {
 
             const option = {
                 method: "POST",
-                url: `${apiUrl}/answer/${currentChapter.value}`,
+                url: `${apiUrl}/learn-es7/answer/${currentChapter.value}`,
                 data: parseQuery
             };
 
