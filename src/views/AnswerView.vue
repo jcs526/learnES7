@@ -8,7 +8,7 @@
                 <div class="document-sample">문서 샘플</div>
                 <json-viewer :value="resultData" :expand-depth=10 copyable />
             </div>
-            <div v-else></div>
+            <div v-else class="document-sample">{{ resultData }}</div>
         </transition>
     </div>
 </template>
