@@ -13,6 +13,10 @@ import { onMounted, ref, watch } from "vue";
 import { useMainStore } from "@/stores/main";
 import { storeToRefs } from "pinia";
 import axios from "axios";
+const apiUrl: string = import.meta.env.VITE_API_URL;
+const apiInstance = axios.create({
+    baseURL: apiUrl,
+});
 
 import * as monaco from "monaco-editor";
 import "monaco-editor/esm/vs/basic-languages/css/css.contribution";
@@ -96,17 +100,18 @@ const handleSubmit = async (): Promise<void> => {
         try {
             const parseQuery: object = JSON.parse(userQuery);
 
-            const apiUrl: string = import.meta.env.VITE_API_URL;
-            console.log(apiUrl);
 
+
+            const url: string = `/learn-es7/answer/${currentChapter.value}`;
+            console.log(url);
 
             const option = {
                 method: "POST",
-                url: `${apiUrl}/learn-es7/answer/${currentChapter.value}`,
+                url,
                 data: parseQuery
             };
 
-            const res = await axios(option);
+            const res = await apiInstance(option);
 
             console.log(res.data);
 
