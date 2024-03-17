@@ -1,10 +1,11 @@
 <template>
     <div class="editor-wrapper">
-        <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }"></div>
+        <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }">
+        </div>
         <button class="submit" :class="{ pulse_animation: !canNext }" @click="handleSubmit">제출</button>
         <button class="formatting" @click="handleFormatting">format</button>
         <button class="formatting" @click="handleReset">초기화</button>
-        <button class="next animation" v-if="canNext" @click="handleNext">다음</button>
+        <button class="next animation" style="display: inline-block;" v-if="canNext" @click="handleNext">다음</button>
     </div>
 </template>
 
@@ -35,7 +36,7 @@ const mainStore = useMainStore();
 const editorRef = ref<HTMLElement | null>(null);
 let editor: monaco.editor.IStandaloneCodeEditor;
 
-const { isShake, currentChapter, totalChapter, resultData, canNext, defaultQuery } = storeToRefs(mainStore);
+const { isShake, currentChapter, totalChapter, resultData, sampleData, canNext, defaultQuery } = storeToRefs(mainStore);
 
 onMounted((): void => {
     if (editorRef.value) {
@@ -92,9 +93,11 @@ onMounted((): void => {
     }
 });
 
+const isWait = ref(false);
 // 정답 제출
 const handleSubmit = async (): Promise<void> => {
-    if (editor && !isShake.value) {
+    if (editor && !isShake.value && !isWait.value) {
+        isWait.value = true;
         const userQuery = editor.getValue(); // 에디터에서 텍스트 추출
 
         try {
@@ -136,6 +139,10 @@ const handleSubmit = async (): Promise<void> => {
             isShake.value = true;
             setTimeout(() => {
                 isShake.value = false;
+            }, 1000);
+        } finally {
+            setTimeout(() => {
+                isWait.value = false;
             }, 1000);
         }
     }
@@ -180,6 +187,12 @@ const handleNext = (): void => {
     }
     canNext.value = false;
 };
+
+watch(canNext, newValue => {
+    if (newValue === false) {
+        resultData.value = sampleData.value;
+    }
+});
 
 interface ESdata {
     "category"?: string[]
@@ -369,7 +382,9 @@ button {
 
 .next {
     float: right;
-    width: 50px;
+    width: 60px;
+    height: 40px;
+    font-size: 1.2rem;
     margin-left: 10px;
     background-color: #F12D22;
     color: white;

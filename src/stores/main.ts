@@ -342,7 +342,8 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       "다음은 terms aggregation을 이용해서 생성한 day_of_week 버킷 별로 avg aggregation을 이용해서 taxful_total_price 필드의 평균값을 계산하는 통계를 생성하는 예제입니다."],
   });
 
-  const resultData: Ref<NumberIndexedObject> = ref({
+  const resultData: Ref<NumberIndexedObject> = ref({});
+  const sampleData: Ref<NumberIndexedObject> = ref({
     category: [
       "Men's Clothing"
     ],
@@ -431,5 +432,5 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
 
   const canNext: Ref<Boolean> = ref(false);
 
-  return { isShake, currentChapter, totalChapter, defaultQuery, explain, hints, resultData, canNext };
+  return { isShake, currentChapter, totalChapter, defaultQuery, explain, hints, resultData, sampleData, canNext };
 });
