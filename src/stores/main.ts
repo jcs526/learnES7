@@ -254,7 +254,7 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       "숫자, 날짜, 문자열 등 다양한 타입의 필드에 적용할 수 있습니다.",
       "gte : 이상, lte : 이하",
       "gt : 초과, lt : 미만",
-      "<i>taxful_total_price 필드의 값이 1000 이상인 문서를 검색하세요.</i>"
+      "<i>taxful_total_price 필드의 값이 100 이상인 문서를 검색하세요.</i>"
     ],
     5: [
       "Boolean 쿼리는 논리 연산자(AND, OR, NOT)를 사용해 여러 검색 조건을 결합합니다.",
