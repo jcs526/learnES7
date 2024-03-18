@@ -1,11 +1,13 @@
 <template>
     <div class="editor-wrapper">
-        <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }">
+        <div class="button-wrapper">
+            <button class="submit" :class="{ pulse_animation: !canNext }" v-if="!canNext" @click="handleSubmit">제출</button>
+            <button class="next animation" style="display: inline-block;" v-else-if="canNext"
+                @click="handleNext">다음</button>
+            <button class="formatting" @click="handleFormatting">format</button>
+            <button class="formatting" @click="handleReset">초기화</button>
         </div>
-        <button class="submit" :class="{ pulse_animation: !canNext }" @click="handleSubmit">제출</button>
-        <button class="formatting" @click="handleFormatting">format</button>
-        <button class="formatting" @click="handleReset">초기화</button>
-        <button class="next animation" style="display: inline-block;" v-if="canNext" @click="handleNext">다음</button>
+        <div ref="editorRef" class="editor" :class="{ 'editor-shake-container': isShake }" />
     </div>
 </template>
 
@@ -222,7 +224,6 @@ button {
 
 .submit {
     width: 50px;
-
 }
 
 .formatting {
@@ -232,9 +233,7 @@ button {
 
 .next {
     float: right;
-    width: 60px;
-    height: 40px;
-    font-size: 1.2rem;
+    width: 50px;
     margin-left: 10px;
     background-color: #F12D22;
     color: white;
@@ -301,5 +300,17 @@ button {
 
 .animation {
     animation: tada 1s, pulse 2s infinite 2s;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.editor-wrapper {
+    flex-basis: 240px;
+    margin-top: -65px;
+    /* Adjust based on actual button width */
 }
 </style>

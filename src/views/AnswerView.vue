@@ -36,9 +36,9 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-.answer-contatiner {
-    height: 100vh;
-    overflow: auto;
+.answer-container {
+    /* height: 100vh;
+    overflow: auto; */
 }
 
 .document-sample {

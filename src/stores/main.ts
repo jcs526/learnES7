@@ -230,7 +230,7 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       "Elasticsearch는 REST API를 통해 접근할 수 있습니다.",
       "Elasticsearch의 모든 쿼리와 결과는 JSON 형태로 이루어져 있습니다.",
       `기본적으로 ${JSON.stringify({ query: {} }, null, 4)} 구조를 가지고 있습니다.`,
-      "<i>제출을 클릭해보세요.</i>"
+      "<i>제출을 클릭해보세요.(또는 Ctrl+Enter를 입력하세요.)</i>"
     ],
     2: [
       "Elasticsearch의 텍스트 검색은 크게 유사일치와 완벽일치로 나뉩니다.",
@@ -285,7 +285,8 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     8: [
       "must, must_not, filter, should 쿼리는 Boolean 쿼리를 조건으로 받을 수 있습니다.",
       "중첩된 Boolean 쿼리를 사용하면 여러 Boolean 쿼리를 결합하여 더 복잡한 검색 조건을 만들 수 있습니다.",
-      "예를 들어, 특정 단어를 포함하면서 다른 단어는 포함하지 않는 문서를 찾되, 추가 조건으로 특정 범위의 날짜를 가진 문서를 찾는 것과 같은 조건을 정의할 수 있습니다."
+      "예를 들어, 특정 단어를 포함하면서 다른 단어는 포함하지 않는 문서를 찾되, 추가 조건으로 특정 범위의 날짜를 가진 문서를 찾는 것과 같은 조건을 정의할 수 있습니다.",
+      "<i>&nbsp;</i>"
     ],
     9: [
       "Terms 쿼리는 여러 개의 정확한 값을 동시에 찾을 수 있게 해줍니다.",
@@ -336,10 +337,12 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     17: [
       "Bucket Aggregation은 주어진 조건으로 분류된 버킷들을 만들고, 각 버킷에 소속되는 문서들을 모아 그룹으로 구분하는 것입니다",
       "각 버킷 별로 포함되는 도큐먼트의 개수는 doc_count 값에 기본적으로 표시가 되며 각 버킷 안에 metrics aggregation 을 이용해서 다른 계산들도 가능합니다",
-      "주로 사용되는 bucket aggregation 들은 Range, Histogram, Terms 등이 있습니다."
+      "주로 사용되는 bucket aggregation 들은 Range, Histogram, Terms 등이 있습니다.",
+      "<i>&nbsp;</i>"
     ],
     18: ["Bucket Aggregation 으로 만든 버킷들 내부에 다시 \"aggs\" : { } 를 선언해서 또다른 버킷을 만들거나 Metrics Aggregation 을 만들어 사용이 가능합니다.",
-      "다음은 terms aggregation을 이용해서 생성한 day_of_week 버킷 별로 avg aggregation을 이용해서 taxful_total_price 필드의 평균값을 계산하는 통계를 생성하는 예제입니다."],
+      "다음은 terms aggregation을 이용해서 생성한 day_of_week 버킷 별로 avg aggregation을 이용해서 taxful_total_price 필드의 평균값을 계산하는 통계를 생성하는 예제입니다.",
+      "<i>&nbsp;</i>"],
   });
 
   const resultData: Ref<NumberIndexedObject> = ref({});

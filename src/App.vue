@@ -73,10 +73,10 @@ header {
 
 .footer {
   width: 100%;
-  position: absolute;
+  /* position: absolute; */
   bottom: 5px;
   left: 50%;
-  transform: translateX(-50%);
+  /* transform: translateX(-50%); */
   color: white;
   /* 흰색 텍스트 */
   padding: 20px 0;

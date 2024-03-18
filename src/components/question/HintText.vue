@@ -1,17 +1,19 @@
 <!-- eslint-disable max-len -->
 <template>
-    <div class="hint-wrapper">
-        <div class="hint-header">
-            <div class="title"> {{ title }}</div>
-            <div class="chapter">
-                <span @click="handleLeftArrow">&lt;=</span> {{ currentChapter }} / {{ totalChapter }} <span
-                    @click="handleRightArrow">=&gt;</span>
+    <div class="content-wrapper">
+        <div class="hint-wrapper">
+            <div class="hint-header">
+                <div class="title"> {{ title }}</div>
+                <div class="chapter">
+                    <span @click="handleLeftArrow">&lt;=</span> {{ currentChapter }} / {{ totalChapter }} <span
+                        @click="handleRightArrow">=&gt;</span>
+                </div>
             </div>
-        </div>
-        <div class="explain">{{ explain[currentChapter] }}</div>
-        <div class="hint">
-            <li v-for="(hint, index) in hints[currentChapter]" :class="{ 'no-marker': hint.startsWith('<i>') }" :key="index"
-                v-html="hint"></li>
+            <div class="explain">{{ explain[currentChapter] }}</div>
+            <div class="hint">
+                <li v-for="(hint, index) in hints[currentChapter]" :class="{ 'no-marker': hint.startsWith('<i>') }"
+                    :key="index" v-html="hint"></li>
+            </div>
         </div>
     </div>
 </template>
@@ -51,6 +53,13 @@ const handleRightArrow = (): void => {
     color: white;
     font-family: 'Do Hyeon', sans-serif;
     font-weight: 6.0;
+    flex-grow: 1;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .hint-header {
@@ -78,5 +87,9 @@ const handleRightArrow = (): void => {
 .hint {
     margin: 15px 0;
     font-size: 20px;
+}
+
+.no-marker {
+    width: calc(100% - 225px)
 }
 </style>
