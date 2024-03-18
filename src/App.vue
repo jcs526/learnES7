@@ -95,7 +95,7 @@ footer a,
 footer a:visited,
 footer a:hover,
 footer a:active {
-  color: #aad751;
+  color: hsla(210, 100%, 50%, 1);
   /* 연두색 링크 */
   text-decoration: none;
   /* 밑줄 없음 */

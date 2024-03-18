@@ -89,6 +89,11 @@ const handleRightArrow = (): void => {
     font-size: 20px;
 }
 
+::v-deep .hint b {
+    /* color: hsl(48, 100%, 50%); */
+    color: rgb(0, 0, 255);
+}
+
 .no-marker {
     width: calc(100% - 225px)
 }
