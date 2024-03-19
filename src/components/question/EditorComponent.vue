@@ -184,6 +184,7 @@ const addQuotesToJsonKeys = (str: string): string => {
 const handleReset = (): void => {
     editor.setValue(JSON.stringify(defaultQuery.value[currentChapter.value], null, 4));
     resultData.value = sampleData.value;
+    canNext.value = false;
     transitionKey.value++;
 };
 
