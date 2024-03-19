@@ -11,7 +11,7 @@
             </div>
             <div class="explain">{{ explain[currentChapter] }}</div>
             <div class="hint">
-                <li v-for="(hint, index) in hints[currentChapter]" :class="{ 'no-marker': hint.startsWith('<i>') }"
+                <li v-for="(hint, index) in hints[currentChapter]" :class="{ 'no-marker': hint.startsWith('<i') }"
                     :key="index" v-html="hint"></li>
             </div>
         </div>
@@ -31,18 +31,20 @@ const title: Ref<string> = ref("Elasticsearch7 쿼리 학습");
 
 // 텍스트 관련 로직
 const mainStore = useMainStore();
-const { hints, explain, currentChapter, totalChapter, canNext } = storeToRefs(mainStore);
+const { hints, explain, currentChapter, totalChapter, canNext, transitionKey } = storeToRefs(mainStore);
 
 const handleLeftArrow = (): void => {
     if (currentChapter.value > 1) {
         currentChapter.value -= 1;
         canNext.value = false;
+        transitionKey.value++;
     }
 };
 const handleRightArrow = (): void => {
     if (currentChapter.value < totalChapter.value) {
         currentChapter.value += 1;
         canNext.value = false;
+        transitionKey.value++;
     }
 };
 
@@ -89,9 +91,10 @@ const handleRightArrow = (): void => {
     font-size: 20px;
 }
 
-::v-deep .hint b {
-    /* color: hsl(48, 100%, 50%); */
-    color: rgb(0, 0, 255);
+.hint :deep(b) {
+    color: hsl(48, 100%, 50%);
+    font-family: 'Do Hyeon', sans-serif;
+    /* color: rgb(0, 0, 255); */
 }
 
 .no-marker {

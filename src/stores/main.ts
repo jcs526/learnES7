@@ -28,7 +28,26 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
     5: { query: { bool: { must: [{ match: {} }], must_not: [] } }, _source: ["customer_full_name"] },
     6: { query: { bool: { filter: [{ term: {} }] } }, _source: ["email", "taxful_total_price"] },
     7: { query: { bool: { should: [{ term: {} }], minimum_should_match: 1 } }, _source: ["customer_full_name", "day_of_week", "taxful_total_price"] },
-    8: { query: { bool: { should: [{ term: {} }] } }, _source: ["customer_full_name", "day_of_week", "taxful_total_price"] },
+    8: {
+      query: {
+        bool: {
+          should: [
+            {
+
+            },
+            {
+              bool: {
+              }
+            }
+          ]
+        }
+      },
+      _source: [
+        "total_quantity",
+        "day_of_week",
+        "taxful_total_price"
+      ]
+    },
     9: { query: { bool: { must: [{ terms: {} }] } }, _source: ["manufacturer"] },
     10: { query: { bool: { must: [{ wildcard: {} }] } }, _source: ["user"] },
     11: { query: { exists: { field: "" } }, _source: ["email"] },
@@ -285,7 +304,10 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
       "must, must_not, filter, should 쿼리는 Boolean 쿼리를 조건으로 받을 수 있습니다.",
       "중첩된 Boolean 쿼리를 사용하면 여러 Boolean 쿼리를 결합하여 더 복잡한 검색 조건을 만들 수 있습니다.",
       "예를 들어, 특정 단어를 포함하면서 다른 단어는 포함하지 않는 문서를 찾되, 추가 조건으로 특정 범위의 날짜를 가진 문서를 찾는 것과 같은 조건을 정의할 수 있습니다.",
-      "<i>&nbsp;</i>"
+      "<i>아래와 같은 조건의 문서를 검색하세요.</i>",
+      "<i>1.total_quantity 값이 4 이상이거나</i>",
+      "<i>2.taxful_total_price의 값이 200 이상이면서 day_of_week가 'Monday'인 문서</i>",
+      "<i class='gothic-font'><b>(정리)</b> (total_quantity>=4) || (taxful_total_price>=200 && day_of_week=\"Monday\")</i>"
     ],
     9: [
       "<b>Terms 쿼리는 여러 개의 정확한 값을 동시에 검색</b>할 수 있습니다.",
@@ -434,5 +456,56 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
 
   const canNext: Ref<Boolean> = ref(false);
 
-  return { isShake, currentChapter, totalChapter, defaultQuery, explain, hints, resultData, sampleData, canNext };
+  const transitionKey = ref(0);
+  const o = {
+    query: {
+      bool: {
+        should: [
+          {
+            range: {
+              total_quantity: {
+                gte: 4
+              }
+            }
+          },
+          {
+            bool: {
+              must: [
+                {
+                  range: {
+                    taxful_total_price: {
+                      gte: 200
+                    }
+                  }
+                },
+                {
+                  term: {
+                    day_of_week: "Monday"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    _source: [
+      "total_quantity",
+      "day_of_week",
+      "taxful_total_price"
+    ]
+  };
+
+  return {
+    isShake,
+    currentChapter,
+    totalChapter,
+    defaultQuery,
+    explain,
+    hints,
+    resultData,
+    sampleData,
+    canNext,
+    transitionKey
+  };
 });

@@ -58,3 +58,8 @@ i {
   font-size: 1.7rem;
     color: yellow;
 }
+
+.gothic-font {
+  font-size: 1.2rem;
+  font-family: "Malgun Gothic", sans-serif;
+}

@@ -4,11 +4,10 @@
             <div v-if="resultData.hits" :key="transitionKey">
                 <json-viewer :value="resultData" :expand-depth=10 copyable />
             </div>
-            <div v-else-if="resultData === sampleData" key="no-hits">
+            <div v-else :key="`default-${transitionKey}`">
                 <div class="document-sample">문서 샘플</div>
                 <json-viewer :value="resultData" :expand-depth=10 copyable />
             </div>
-            <div v-else class="document-sample">{{ resultData }}</div>
         </transition>
     </div>
 </template>
@@ -17,16 +16,15 @@
 import JsonViewer from "vue-json-viewer";
 import { useMainStore } from "@/stores/main";
 import { storeToRefs } from "pinia";
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, watchEffect } from "vue";
 
 const mainStore = useMainStore();
-const { resultData, sampleData } = storeToRefs(mainStore);
+const { resultData, sampleData, transitionKey } = storeToRefs(mainStore);
 
 onMounted(() => {
     resultData.value = sampleData.value;
 });
 
-const transitionKey = ref(0);
 
 watchEffect(() => {
     if (resultData.value) {

@@ -38,7 +38,8 @@ const mainStore = useMainStore();
 const editorRef = ref<HTMLElement | null>(null);
 let editor: monaco.editor.IStandaloneCodeEditor;
 
-const { isShake, currentChapter, totalChapter, resultData, sampleData, canNext, defaultQuery } = storeToRefs(mainStore);
+const { isShake, currentChapter, totalChapter, resultData, sampleData,
+    canNext, defaultQuery, transitionKey } = storeToRefs(mainStore);
 
 onMounted((): void => {
     if (editorRef.value) {
@@ -182,6 +183,8 @@ const addQuotesToJsonKeys = (str: string): string => {
 
 const handleReset = (): void => {
     editor.setValue(JSON.stringify(defaultQuery.value[currentChapter.value], null, 4));
+    resultData.value = sampleData.value;
+    transitionKey.value++;
 };
 
 const handleNext = (): void => {
