@@ -457,44 +457,6 @@ export const useMainStore: StoreDefinition = defineStore("main", () => {
   const canNext: Ref<Boolean> = ref(false);
 
   const transitionKey = ref(0);
-  const o = {
-    query: {
-      bool: {
-        should: [
-          {
-            range: {
-              total_quantity: {
-                gte: 4
-              }
-            }
-          },
-          {
-            bool: {
-              must: [
-                {
-                  range: {
-                    taxful_total_price: {
-                      gte: 200
-                    }
-                  }
-                },
-                {
-                  term: {
-                    day_of_week: "Monday"
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    _source: [
-      "total_quantity",
-      "day_of_week",
-      "taxful_total_price"
-    ]
-  };
 
   return {
     isShake,
